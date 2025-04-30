@@ -7,13 +7,13 @@
     GitHub          : github.com/cyber-jose
     Date Created    : 2025-04-30
     Last Modified   : 2025-04-30
-    Version         : 1.3
+    Version         : 1.4
     STIG-ID         : WN10-CC-000150
 
 .TESTED ON
     Date(s) Tested  : 2025-04-30
     Tested By       : Jose Camacho
-    Systems Tested  : Windows 10 Pro 22H2 (OEM + clean installs)
+    Systems Tested  : Windows 10 Pro 22H2, Windows 10 Enterprise
     PowerShell Ver. : 5.1
 
 .USAGE
@@ -22,25 +22,18 @@
 #>
 #Requires -RunAsAdministrator
 
-# GUIDs
-$securitySubgroupGUID = "4f971e89-eebd-4455-a8de-9e59040e7347"      # Security Settings
-$passwordSettingGUID  = "abfc2519-3608-4c2a-94ea-171b0ed546ab"     # Require a password on wake
-$desiredValue = 1
+# Configure Group Policy setting for "Require a password when a computer wakes (plugged in)"
+$gpSettingPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System"
+$policyName = "InactivityTimeoutSecs"
+$desiredValue = 1  # Enabling the password prompt for AC
 
-# Get all power scheme GUIDs
-$schemeGUIDs = powercfg /list | ForEach-Object {
-    if ($_ -match "Power Scheme GUID: ([a-f0-9\-]+)") { $matches[1] }
+# Check if the registry key exists
+if (-Not (Test-Path $gpSettingPath)) {
+    New-Item -Path $gpSettingPath -Force | Out-Null
 }
 
-foreach ($schemeGUID in $schemeGUIDs) {
-    Write-Host "`n▶ Applying setting to scheme: $schemeGUID"
+# Enable the policy to require a password on wake for AC power
+Set-ItemProperty -Path $gpSettingPath -Name "RequirePasswordOnWake" -Value 1 -Type DWord
 
-    try {
-        # Attempt to set the AC value for "Require a password on wake"
-        powercfg /setacvalueindex $schemeGUID $securitySubgroupGUID $passwordSettingGUID $desiredValue
-        powercfg /setactive $schemeGUID
-        Write-Host "  ✔ Successfully enforced password on wake (AC) for scheme $schemeGUID"
-    } catch {
-        Write-Warning "  ⚠ Failed to apply to scheme [$schemeGUID]: $($_.Exception.Message)"
-    }
-}
+# Apply the new setting (enabling password on wake from sleep)
+Write-Host "✔ Configured password prompt requirement on wake (AC power)."
