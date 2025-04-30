@@ -1,0 +1,45 @@
+<#
+.SYNOPSIS
+    This PowerShell script disables Wi-Fi Sense by setting all related registry values to 0, as required by STIG WN10-CC-000065.
+
+.NOTES
+    Author          : Jose Camacho
+    GitHub          : github.com/cyber-jose
+    Date Created    : 2025-04-30
+    Last Modified   : 2025-04-30
+    Version         : 1.0
+    CVEs            : N/A
+    Plugin IDs      : N/A
+    STIG-ID         : WN10-CC-000065
+
+.TESTED ON
+    Date(s) Tested  : 2025-04-29
+    Tested By       : Jose Camacho
+    Systems Tested  : Windows 10 Pro 22H2
+    PowerShell Ver. : 5.1
+
+.USAGE
+    Run this script as an administrator to disable all Wi-Fi Sense features.
+    Example syntax:
+    PS C:\> .\Set-WN10-CC-000065.ps1
+#>
+#Requires -RunAsAdministrator
+
+$registryPath = "HKLM:\SOFTWARE\Microsoft\WcmSvc\wifinetworkmanager\config"
+
+# Define desired registry values
+$settings = @{
+    "AutoConnectAllowedOEM" = 0
+    "WiFiSenseCredShared"   = 0
+    "WiFiSenseOpen"         = 0
+}
+
+# Create the key if it doesn't exist
+if (!(Test-Path $registryPath)) {
+    New-Item -Path $registryPath -Force | Out-Null
+}
+
+# Apply each setting
+foreach ($name in $settings.Keys) {
+    Set-ItemProperty -Path $registryPath -Name $name -Value $settings[$name] -Type DWord
+}
