@@ -22,10 +22,10 @@
 #>
 #Requires -RunAsAdministrator
 
-# Configure Group Policy setting for "Require a password when a computer wakes (plugged in)"
-$gpSettingPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System"
-$policyName = "InactivityTimeoutSecs"
-$desiredValue = 1  # Enabling the password prompt for AC
+# Registry path for "Require a password on wake"
+$gpSettingPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
+$policyName = "RequirePasswordOnWake"
+$desiredValue = 1  # Enabling the password prompt for AC power
 
 # Check if the registry key exists
 if (-Not (Test-Path $gpSettingPath)) {
@@ -33,7 +33,7 @@ if (-Not (Test-Path $gpSettingPath)) {
 }
 
 # Enable the policy to require a password on wake for AC power
-Set-ItemProperty -Path $gpSettingPath -Name "RequirePasswordOnWake" -Value 1 -Type DWord
+Set-ItemProperty -Path $gpSettingPath -Name $policyName -Value $desiredValue -Type DWord
 
-# Apply the new setting (enabling password on wake from sleep)
+# Apply the new setting (enabling password on wake from sleep on AC)
 Write-Host "✔ Configured password prompt requirement on wake (AC power)."
