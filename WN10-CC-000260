@@ -1,0 +1,38 @@
+<#
+.SYNOPSIS
+    This PowerShell script enforces a minimum PIN length of six characters for Windows Hello, in compliance with STIG WN10-CC-000260.
+
+.NOTES
+    Author          : Jose Camacho
+    GitHub          : github.com/cyber-jose
+    Date Created    : 2025-04-30
+    Last Modified   : 2025-04-30
+    Version         : 1.0
+    CVEs            : N/A
+    Plugin IDs      : N/A
+    STIG-ID         : WN10-CC-000260
+
+.TESTED ON
+    Date(s) Tested  : 2025-04-29
+    Tested By       : Jose Camacho
+    Systems Tested  : Windows 10 Pro 22H2
+    PowerShell Ver. : 5.1
+
+.USAGE
+    Run this script as an administrator to enforce a minimum PIN length of six characters for Windows Hello for Business.
+    Example syntax:
+    PS C:\> .\Set-WN10-CC-000260.ps1
+#>
+#Requires -RunAsAdministrator
+
+$registryPath = "HKLM:\SOFTWARE\Policies\Microsoft\PassportForWork\PINComplexity"
+$propertyName = "MinimumPINLength"
+$desiredValue = 6
+
+# Create the registry key if it doesn't exist
+If (!(Test-Path $registryPath)) {
+    New-Item -Path $registryPath -Force | Out-Null
+}
+
+# Set the minimum PIN length
+Set-ItemProperty -Path $registryPath -Name $propertyName -Value $desiredValue -Type DWord
