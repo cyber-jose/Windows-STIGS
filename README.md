@@ -27,15 +27,15 @@ Each script includes:
 
 ## ✅ Remediation Scripts Overview
 
-| STIG ID         | Description                                 | Script Name                  |
-|-----------------|---------------------------------------------|------------------------------|
-| WN10-CC-000020  | Disable IPv6 source routing                 | `Set-WN10-CC-000020.ps1`     |
-| WN10-CC-000065  | Disable Wi-Fi Sense                         | `Set-WN10-CC-000065.ps1`     |
-| WN10-CC-000260  | Enforce minimum PIN length                  | `Set-WN10-CC-000260.ps1`     |
-| WN10-CC-000150  | Require password on wake (AC power)         | `Fix-WN10-CC-000150.ps1`     |
-| WN10-CC-000160  | Require password on wake (DC power)         | `Fix-WN10-CC-000160.ps1`     |
-| WN10-AC-000010  | Limit failed login attempts                 | `Fix-WN10-AC-000010.ps1`     |
-| WN10-CC-000145  | Require password on wake (battery)          | `Fix-WN10-CC-000145.ps1`     |
+| STIG ID         | Description                                 | Script Name              |
+|-----------------|---------------------------------------------|--------------------------|
+| WN10-CC-000020  | Disable IPv6 source routing                 | `WN10-CC-000020.ps1`     |
+| WN10-CC-000065  | Disable Wi-Fi Sense                         | `WN10-CC-000065.ps1`     |
+| WN10-CC-000260  | Enforce minimum PIN length                  | `WN10-CC-000260.ps1`     |
+| WN10-CC-000150  | Require password on wake (AC power)         | `WN10-CC-000150.ps1`     |
+| WN10-CC-000160  | Require password on wake (DC power)         | `WN10-CC-000160.ps1`     |
+| WN10-AC-000010  | Limit failed login attempts                 | `WN10-AC-000010.ps1`     |
+| WN10-CC-000145  | Require password on wake (battery)          | `WN10-CC-000145.ps1`     |
 
 ---
 
