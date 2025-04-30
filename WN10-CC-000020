@@ -1,0 +1,36 @@
+<#
+.SYNOPSIS
+        This PowerShell script ensures IPv6 source routing is disabled by setting the DisableIPSourceRouting registry value to 2, as required by STIG WN10-CC-000020.
+
+.NOTES
+    Author          : Jose Camacho
+    GitHub          : github.com/cyber-jose
+    Date Created    : 2025-04-30
+    Last Modified   : 2025-04-30
+    Version         : 1.0
+    CVEs            : N/A
+    Plugin IDs      : N/A
+    STIG-ID         : WN10-CC-000020
+
+.TESTED ON
+    Date(s) Tested  : 2025-04-29
+    Tested By       :  Jose Camacho
+
+.USAGE
+    Run this script as an administrator to enforce IPv6 source routing protection.
+    Example syntax:
+    PS C:\> .\Set-WN10-CC-000020.ps1
+#>
+#Requires -RunAsAdministrator
+
+$registryPath = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip6\Parameters"
+$propertyName = "DisableIPSourceRouting"
+$desiredValue = 2
+
+# Create the registry key if it doesn't exist
+If (!(Test-Path $registryPath)) {
+    New-Item -Path $registryPath -Force | Out-Null
+}
+
+# Set the required value
+Set-ItemProperty -Path $registryPath -Name $propertyName -Value $desiredValue -Type DWord
