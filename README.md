@@ -87,9 +87,7 @@ This setting enforces that users must re-authenticate when a system resumes from
 
 Run scripts individually based on the STIG finding you're remediating.
 
-# Example
-
-.\Fix-WN10-CC-000150.ps1
+Example .\WN10-CC-000150.ps1
 
 # Disclaimer
 
