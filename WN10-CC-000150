@@ -1,0 +1,46 @@
+<#
+.SYNOPSIS
+    Ensures password prompt is required on resume from sleep while on AC power, in accordance with STIG WN10-CC-000150.
+
+.NOTES
+    Author          : Jose Camacho
+    GitHub          : github.com/cyber-jose
+    Date Created    : 2025-04-30
+    Last Modified   : 2025-04-30
+    Version         : 1.3
+    STIG-ID         : WN10-CC-000150
+
+.TESTED ON
+    Date(s) Tested  : 2025-04-30
+    Tested By       : Jose Camacho
+    Systems Tested  : Windows 10 Pro 22H2 (OEM + clean installs)
+    PowerShell Ver. : 5.1
+
+.USAGE
+    Run this script as administrator to enforce the AC power resume password requirement:
+    PS C:\> .\Fix-WN10-CC-000150.ps1
+#>
+#Requires -RunAsAdministrator
+
+# GUIDs
+$securitySubgroupGUID = "4f971e89-eebd-4455-a8de-9e59040e7347"      # Security Settings
+$passwordSettingGUID  = "abfc2519-3608-4c2a-94ea-171b0ed546ab"     # Require a password on wake
+$desiredValue = 1
+
+# Get all power scheme GUIDs
+$schemeGUIDs = powercfg /list | ForEach-Object {
+    if ($_ -match "Power Scheme GUID: ([a-f0-9\-]+)") { $matches[1] }
+}
+
+foreach ($schemeGUID in $schemeGUIDs) {
+    Write-Host "`n▶ Applying setting to scheme: $schemeGUID"
+
+    try {
+        # Attempt to set the AC value for "Require a password on wake"
+        powercfg /setacvalueindex $schemeGUID $securitySubgroupGUID $passwordSettingGUID $desiredValue
+        powercfg /setactive $schemeGUID
+        Write-Host "  ✔ Successfully enforced password on wake (AC) for scheme $schemeGUID"
+    } catch {
+        Write-Warning "  ⚠ Failed to apply to scheme [$schemeGUID]: $($_.Exception.Message)"
+    }
+}
