@@ -34,7 +34,7 @@ Each script includes:
 | WN10-CC-000260  | Enforce minimum PIN length                  | `WN10-CC-000260.ps1`     |
 | WN10-CC-000150  | Require password on wake (AC power)         | `WN10-CC-000150.ps1`     |
 | WN10-CC-000160  | Require password on wake (DC power)         | `WN10-CC-000160.ps1`     |
-| WN10-AC-000010  | Limit failed login attempts                 | `WN10-AC-000010.ps1`     |
+| WN10-AC-000010  | Limit failed login attempts (https://github.com/cyber-jose/Windows-STIGS/blob/main/WN10-AC-000010)                 | `WN10-AC-000010.ps1`     |
 | WN10-CC-000145  | Require password on wake (battery)          | `WN10-CC-000145.ps1`     |
 
 ---
