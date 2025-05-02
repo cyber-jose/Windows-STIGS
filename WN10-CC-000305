@@ -1,0 +1,38 @@
+<#
+.SYNOPSIS
+    Disables indexing of encrypted files to comply with STIG WN10-CC-000305.
+
+.NOTES
+    Author          : Jose Camacho
+    GitHub          : github.com/cyber-jose
+    Date Created    : 2025-05-01
+    Last Modified   : 2025-05-01
+    Version         : 1.0
+    STIG-ID         : WN10-CC-000305
+
+.TESTED ON
+    Date(s) Tested  : 2025-05-01
+    Tested By       : Jose Camacho
+    Systems Tested  : Windows 10 Pro 22H2, Windows 10 Enterprise
+    PowerShell Ver. : 5.1
+
+.USAGE
+    Run this script as administrator to disable indexing of encrypted files:
+    PS C:\> .\Fix-WN10-CC-000305.ps1
+#>
+#Requires -RunAsAdministrator
+
+# Define the registry path and values for the policy
+$regPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search"
+$policyName = "AllowIndexingEncryptedStoresOrItems"
+$desiredValue = 0  # 0 = Disabled
+
+# Ensure the registry path exists
+if (-Not (Test-Path $regPath)) {
+    New-Item -Path $regPath -Force | Out-Null
+}
+
+# Disable indexing of encrypted files
+Set-ItemProperty -Path $regPath -Name $policyName -Value $desiredValue -Type DWord
+
+Write-Host "✔ Indexing of encrypted files has been disabled (STIG WN10-CC-000305)." -ForegroundColor Green
