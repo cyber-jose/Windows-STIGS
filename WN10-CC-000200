@@ -1,0 +1,38 @@
+<#
+.SYNOPSIS
+    Disables administrator account enumeration during elevation prompts in compliance with STIG WN10-CC-000200.
+
+.NOTES
+    Author          : Jose Camacho
+    GitHub          : github.com/cyber-jose
+    Date Created    : 2025-05-01
+    Last Modified   : 2025-05-01
+    Version         : 1.0
+    STIG-ID         : WN10-CC-000200
+
+.TESTED ON
+    Date(s) Tested  : 2025-05-01
+    Tested By       : Jose Camacho
+    Systems Tested  : Windows 10 Pro 22H2, Windows 10 Enterprise
+    PowerShell Ver. : 5.1
+
+.USAGE
+    Run this script as administrator to disable enumeration of administrator accounts during elevation:
+    PS C:\> .\Fix-WN10-CC-000200.ps1
+#>
+#Requires -RunAsAdministrator
+
+# Define registry path and policy key
+$regPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\CredUI"
+$policyName = "EnumerateAdministrators"
+$desiredValue = 0  # 0 = Disabled (do not enumerate administrator accounts)
+
+# Ensure the registry path exists
+if (-Not (Test-Path $regPath)) {
+    New-Item -Path $regPath -Force | Out-Null
+}
+
+# Apply the policy setting
+Set-ItemProperty -Path $regPath -Name $policyName -Value $desiredValue -Type DWord
+
+Write-Host "✔ Administrator account enumeration during elevation has been disabled (STIG WN10-CC-000200)." -ForegroundColor Green
