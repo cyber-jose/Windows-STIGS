@@ -1,0 +1,37 @@
+<#
+.SYNOPSIS
+    Prevents users from receiving third-party suggestions in Windows Spotlight, in accordance with STIG WN10-CC-000390.
+
+.NOTES
+    Author          : Jose Camacho
+    GitHub          : github.com/cyber-jose
+    Date Created    : 2025-05-01
+    Last Modified   : 2025-05-01
+    Version         : 1.0
+    STIG-ID         : WN10-CC-000390
+
+.TESTED ON
+    Date(s) Tested  : 2025-05-01
+    Tested By       : Jose Camacho
+    Systems Tested  : Windows 10 Pro 22H2, Windows 10 Enterprise
+    PowerShell Ver. : 5.1
+
+.USAGE
+    Run this script as the logged-in user or via user policy enforcement to disable third-party suggestions:
+    PS C:\> .\Fix-WN10-CC-000390.ps1
+#>
+
+# Define the registry path and values (User Configuration context)
+$regPath = "HKCU:\Software\Policies\Microsoft\Windows\CloudContent"
+$policyName = "DisableThirdPartySuggestions"
+$desiredValue = 1  # 1 = Enabled (do not suggest third-party content)
+
+# Ensure the registry path exists
+if (-Not (Test-Path $regPath)) {
+    New-Item -Path $regPath -Force | Out-Null
+}
+
+# Set the policy to disable third-party suggestions
+Set-ItemProperty -Path $regPath -Name $policyName -Value $desiredValue -Type DWord
+
+Write-Host "✔ Disabled third-party content suggestions in Windows Spotlight (STIG WN10-CC-000390)." -ForegroundColor Green
