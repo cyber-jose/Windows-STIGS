@@ -1,0 +1,47 @@
+<#
+.SYNOPSIS
+    Renames the built-in Guest account to a randomized, non-default name to comply with STIG WN10-SO-000025.
+
+.NOTES
+    Author          : Jose Camacho
+    GitHub          : github.com/cyber-jose
+    Date Created    : 2025-05-01
+    Last Modified   : 2025-05-01
+    Version         : 1.0
+    STIG-ID         : WN10-SO-000025
+
+.TESTED ON
+    Date(s) Tested  : 2025-05-01
+    Tested By       : Jose Camacho
+    Systems Tested  : Windows 10 Pro 22H2, Windows 10 Enterprise
+    PowerShell Ver. : 5.1
+
+.USAGE
+    Run this script as administrator to rename the Guest account:
+    PS C:\> .\Fix-WN10-SO-000025.ps1
+#>
+#Requires -RunAsAdministrator
+
+function Get-RandomGuestName {
+    param (
+        [int]$length = 8
+    )
+    $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+    $suffix = -join ((1..$length) | ForEach-Object { $chars[(Get-Random -Minimum 0 -Maximum $chars.Length)] })
+    return "Guest_$suffix"
+}
+
+# Get the Guest account using Win32_UserAccount WMI class
+$guestAccount = Get-WmiObject -Class Win32_UserAccount -Filter "Name = 'Guest' AND LocalAccount = True"
+
+if ($null -ne $guestAccount) {
+    try {
+        $newName = Get-RandomGuestName
+        Rename-LocalUser -Name "Guest" -NewName $newName
+        Write-Host "✔ Guest account renamed to '$newName' (STIG WN10-SO-000025)." -ForegroundColor Green
+    } catch {
+        Write-Host "[!] Failed to rename Guest account: $_" -ForegroundColor Red
+    }
+} else {
+    Write-Host "[-] Guest account not found or already renamed." -ForegroundColor Yellow
+}
