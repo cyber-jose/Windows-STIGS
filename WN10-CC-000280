@@ -1,0 +1,38 @@
+<#
+.SYNOPSIS
+    Ensures Remote Desktop Services always prompts for a password upon connection in accordance with STIG WN10-CC-000280.
+
+.NOTES
+    Author          : Jose Camacho
+    GitHub          : github.com/cyber-jose
+    Date Created    : 2025-05-02
+    Last Modified   : 2025-05-02
+    Version         : 1.0
+    STIG-ID         : WN10-CC-000280
+
+.TESTED ON
+    Date(s) Tested  : 2025-05-02
+    Tested By       : Jose Camacho
+    Systems Tested  : Windows 10 Pro 22H2, Windows 10 Enterprise
+    PowerShell Ver. : 5.1
+
+.USAGE
+    Run this script as administrator to enforce RDP password prompt requirement:
+    PS C:\> .\Fix-WN10-CC-000280.ps1
+#>
+#Requires -RunAsAdministrator
+
+# Registry path for RDP password prompt policy
+$regPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services"
+$regName = "fPromptForPassword"
+$desiredValue = 1  # 1 = Enabled
+
+# Create the registry key if it doesn't exist
+if (-Not (Test-Path $regPath)) {
+    New-Item -Path $regPath -Force | Out-Null
+}
+
+# Set the policy value to enforce password prompt
+Set-ItemProperty -Path $regPath -Name $regName -Value $desiredValue -Type DWord
+
+Write-Host "✔ Configured RDP to always prompt for password upon connection (STIG WN10-CC-000280)." -ForegroundColor Green
