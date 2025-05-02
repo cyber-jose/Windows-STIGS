@@ -1,0 +1,38 @@
+<#
+.SYNOPSIS
+    Disables AutoPlay for non-volume devices in compliance with STIG WN10-CC-000180.
+
+.NOTES
+    Author          : Jose Camacho
+    GitHub          : github.com/cyber-jose
+    Date Created    : 2025-05-01
+    Last Modified   : 2025-05-01
+    Version         : 1.0
+    STIG-ID         : WN10-CC-000180
+
+.TESTED ON
+    Date(s) Tested  : 2025-05-01
+    Tested By       : Jose Camacho
+    Systems Tested  : Windows 10 Pro 22H2, Windows 10 Enterprise
+    PowerShell Ver. : 5.1
+
+.USAGE
+    Run this script as administrator to disable AutoPlay for non-volume devices:
+    PS C:\> .\Fix-WN10-CC-000180.ps1
+#>
+#Requires -RunAsAdministrator
+
+# Define the registry path and policy value
+$regPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer"
+$policyName = "NoAutoplayfornonVolume"
+$desiredValue = 1  # 1 = Enabled (disallow autoplay for non-volume devices)
+
+# Ensure the registry path exists
+if (-Not (Test-Path $regPath)) {
+    New-Item -Path $regPath -Force | Out-Null
+}
+
+# Set the policy to disallow autoplay for non-volume devices
+Set-ItemProperty -Path $regPath -Name $policyName -Value $desiredValue -Type DWord
+
+Write-Host "✔ AutoPlay for non-volume devices has been disabled (STIG WN10-CC-000180)." -ForegroundColor Green
