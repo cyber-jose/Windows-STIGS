@@ -1,0 +1,38 @@
+<#
+.SYNOPSIS
+    Enforces SMB client packet signing by enabling digital signing for all communications per STIG WN10-SO-000100.
+
+.NOTES
+    Author          : Jose Camacho
+    GitHub          : github.com/cyber-jose
+    Date Created    : 2025-05-01
+    Last Modified   : 2025-05-01
+    Version         : 1.0
+    STIG-ID         : WN10-SO-000100
+
+.TESTED ON
+    Date(s) Tested  : 2025-05-01
+    Tested By       : Jose Camacho
+    Systems Tested  : Windows 10 Pro 22H2, Windows 10 Enterprise
+    PowerShell Ver. : 5.1
+
+.USAGE
+    Run this script as administrator to enforce SMB client packet signing:
+    PS C:\> .\Fix-WN10-SO-000100.ps1
+#>
+#Requires -RunAsAdministrator
+
+# Registry path and setting for SMB client signing (always)
+$regPath = "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters"
+$regName = "RequireSecuritySignature"
+$desiredValue = 1  # 1 = Enabled
+
+# Create registry key if missing
+if (-Not (Test-Path $regPath)) {
+    New-Item -Path $regPath -Force | Out-Null
+}
+
+# Set the registry value to enforce SMB client signing
+Set-ItemProperty -Path $regPath -Name $regName -Value $desiredValue -Type DWord
+
+Write-Host "✔ SMB client packet signing (always) is now enabled (STIG WN10-SO-000100)." -ForegroundColor Green
