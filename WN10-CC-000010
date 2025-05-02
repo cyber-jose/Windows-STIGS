@@ -1,0 +1,38 @@
+<#
+.SYNOPSIS
+    Disables lock screen slide show to comply with STIG WN10-CC-000010.
+
+.NOTES
+    Author          : Jose Camacho  
+    GitHub          : github.com/cyber-jose  
+    Date Created    : 2025-05-01  
+    Last Modified   : 2025-05-01  
+    Version         : 1.0  
+    STIG-ID         : WN10-CC-000010
+
+.TESTED ON
+    Date(s) Tested  : 2025-05-01  
+    Tested By       : Jose Camacho  
+    Systems Tested  : Windows 10 Pro 22H2, Windows 10 Enterprise  
+    PowerShell Ver. : 5.1  
+
+.USAGE
+    Run this script as administrator to disable the lock screen slide show:
+    PS C:\> .\Fix-WN10-CC-000010.ps1
+#>
+#Requires -RunAsAdministrator
+
+# Define registry path and value
+$regPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization"
+$policyName = "NoLockScreenSlideshow"
+$desiredValue = 1  # 1 = Enabled (prevent lock screen slideshow)
+
+# Ensure registry path exists
+if (-Not (Test-Path $regPath)) {
+    New-Item -Path $regPath -Force | Out-Null
+}
+
+# Set the policy to disable lock screen slide show
+Set-ItemProperty -Path $regPath -Name $policyName -Value $desiredValue -Type DWord
+
+Write-Host "✔ Lock screen slide show has been disabled (STIG WN10-CC-000010)." -ForegroundColor Green
