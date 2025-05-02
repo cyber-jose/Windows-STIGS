@@ -1,0 +1,44 @@
+<#
+.SYNOPSIS
+    Configures the Application event log maximum size to 32768 KB or greater per STIG WN10-AU-000500.
+
+.NOTES
+    Author          : Jose Camacho  
+    GitHub          : github.com/cyber-jose  
+    Date Created    : 2025-05-02
+    Last Modified   : 2025-05-02
+    Version         : 1.0  
+    STIG-ID         : WN10-AU-000500
+
+.TESTED ON
+    Date(s) Tested  : 2025-05-02
+    Tested By       : Jose Camacho  
+    Systems Tested  : Windows 10 Pro 22H2, Windows 10 Enterprise  
+    PowerShell Ver. : 5.1  
+
+.USAGE
+    Run this script as administrator to set the maximum size of the Application event log:
+    PS C:\> .\Fix-WN10-AU-000500.ps1
+#>
+#Requires -RunAsAdministrator
+
+# Registry path for Application event log settings
+$regPath = "HKLM:\Software\Policies\Microsoft\Windows\EventLog\Application"
+$regName = "MaxSize"
+$minLogSizeKB = 32768
+
+# Ensure registry path exists
+if (-Not (Test-Path $regPath)) {
+    New-Item -Path $regPath -Force | Out-Null
+}
+
+# Get current value if it exists
+$currentValue = (Get-ItemProperty -Path $regPath -Name $regName -ErrorAction SilentlyContinue).$regName
+
+# Set the value only if it's not set or too small
+if ($null -eq $currentValue -or $currentValue -lt $minLogSizeKB) {
+    Set-ItemProperty -Path $regPath -Name $regName -Value $minLogSizeKB -Type DWord
+    Write-Host "✔ Application log size configured to $minLogSizeKB KB (STIG WN10-AU-000500)." -ForegroundColor Green
+} else {
+    Write-Host "ℹ Application log size is already set to $currentValue KB or greater. No change needed." -ForegroundColor Yellow
+}
