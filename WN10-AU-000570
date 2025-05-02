@@ -1,0 +1,42 @@
+<#
+.SYNOPSIS
+    Configures auditing of Detailed File Share Failures in accordance with STIG WN10-AU-000570.
+
+.NOTES
+    Author          : Jose Camacho  
+    GitHub          : github.com/cyber-jose  
+    Date Created    : 2025-05-02
+    Last Modified   : 2025-05-02
+    Version         : 1.1  
+    STIG-ID         : WN10-AU-000570
+
+.TESTED ON
+    Date(s) Tested  : 2025-05-02 
+    Tested By       : Jose Camacho  
+    Systems Tested  : Windows 10 Pro 22H2, Windows 10 Enterprise  
+    PowerShell Ver. : 5.1  
+
+.USAGE
+    Run this script as administrator to enable auditing of detailed file share failures:
+    PS C:\> .\Fix-WN10-AU-000570.ps1
+#>
+#Requires -RunAsAdministrator
+
+# Define the audit policy subcategory
+$auditCategory = "Detailed File Share"
+
+# Function to configure the audit policy for Failure only
+function Set-AuditPolicyFailureOnly {
+    param (
+        [string]$Subcategory
+    )
+    try {
+        AuditPol /Set /SubCategory:"$Subcategory" /Success:Disable /Failure:Enable | Out-Null
+        Write-Host "✔ Audit policy for '$Subcategory' set to Failure only (STIG WN10-AU-000570)." -ForegroundColor Green
+    } catch {
+        Write-Host "[!] Failed to configure audit policy: $_" -ForegroundColor Red
+    }
+}
+
+# Apply the audit policy
+Set-AuditPolicyFailureOnly -Subcategory $auditCategory
