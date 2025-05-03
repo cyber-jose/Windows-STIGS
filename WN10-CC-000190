@@ -1,0 +1,38 @@
+<#
+.SYNOPSIS
+    Disables AutoPlay on all drives in accordance with STIG requirement WN10-CC-000190.
+
+.NOTES
+    Author          : Jose Camacho  
+    GitHub          : github.com/cyber-jose  
+    Date Created    : 2025-05-03  
+    Last Modified   : 2025-05-03  
+    Version         : 1.0  
+    STIG-ID         : WN10-CC-000190
+
+.TESTED ON
+    Date(s) Tested  : 2025-05-03  
+    Tested By       : Jose Camacho  
+    Systems Tested  : Windows 10 Pro 22H2, Windows 10 Enterprise  
+    PowerShell Ver. : 5.1
+
+.USAGE
+    Run this script as administrator to disable AutoPlay for all drives:
+    PS C:\> .\Fix-WN10-CC-000190.ps1
+#>
+#Requires -RunAsAdministrator
+
+# Registry path and settings for disabling AutoPlay on all drives
+$regPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer"
+$regName = "NoDriveTypeAutoRun"
+$desiredValue = 255  # 0xFF disables AutoPlay on all drives
+
+# Ensure the registry path exists
+if (-Not (Test-Path $regPath)) {
+    New-Item -Path $regPath -Force | Out-Null
+}
+
+# Set the registry value
+Set-ItemProperty -Path $regPath -Name $regName -Value $desiredValue -Type DWord
+
+Write-Host "✔ AutoPlay has been disabled for all drives (STIG WN10-CC-000190)." -ForegroundColor Green
