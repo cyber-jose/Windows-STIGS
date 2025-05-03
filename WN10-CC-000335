@@ -1,0 +1,38 @@
+<#
+.SYNOPSIS
+    Disables unencrypted traffic for the WinRM client in accordance with STIG requirement WN10-CC-000335.
+
+.NOTES
+    Author          : Jose Camacho  
+    GitHub          : github.com/cyber-jose  
+    Date Created    : 2025-05-03  
+    Last Modified   : 2025-05-03  
+    Version         : 1.0  
+    STIG-ID         : WN10-CC-000335
+
+.TESTED ON
+    Date(s) Tested  : 2025-05-03  
+    Tested By       : Jose Camacho  
+    Systems Tested  : Windows 10 Pro 22H2, Windows 10 Enterprise  
+    PowerShell Ver. : 5.1
+
+.USAGE
+    Run this script as administrator to disable unencrypted traffic for WinRM client:
+    PS C:\> .\Fix-WN10-CC-000335.ps1
+#>
+#Requires -RunAsAdministrator
+
+# Registry path for the WinRM client unencrypted traffic setting
+$regPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WinRM\Client"
+$regName = "AllowUnencryptedTraffic"
+$desiredValue = 0  # 0 = Disabled
+
+# Ensure the registry path exists
+if (-Not (Test-Path $regPath)) {
+    New-Item -Path $regPath -Force | Out-Null
+}
+
+# Set the policy value to disable unencrypted traffic
+Set-ItemProperty -Path $regPath -Name $regName -Value $desiredValue -Type DWord
+
+Write-Host "✔ WinRM client unencrypted traffic has been disabled (STIG WN10-CC-000335)." -ForegroundColor Green
